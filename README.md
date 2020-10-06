@@ -41,3 +41,28 @@ Given a schema and a JSON object, create a new array and append the values from 
 ### Deanonymizing JSON
 
 Given a schema and a value array, for each element in the schema, add the name to a new object using the value at the corresponding index in the value array. If the value is an empty object, do not add it to the output object. If the schema element is a nested schema or schema reference, use that schema to deanonymize the value before adding it to the output object.
+
+## Example
+
+```json
+{
+	"schema1": ["field1", "field2", "field3"],
+	"schema2": ["key1", {"key2": "schema1"}, {"key3": ["key3.1", "key3.2"]}]
+}
+```
+
+```json
+[{"foo": "bar"}, [123, "abc", {}], [456, "baz"]]
+```
+\+
+
+schema2
+
+=
+```json
+{
+"key1": {"foo": "bar"}, 
+"key2": {"field1": 123, "field2": "abc"}, 
+"key3": {"key3.1": 456, "key3.2": "baz"}
+}
+```
