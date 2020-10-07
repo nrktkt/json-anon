@@ -66,3 +66,26 @@ schema2
 "key3": {"key3.1": 456, "key3.2": "baz"}
 }
 ```
+
+## Migrations
+
+sometimes you need to change a schema and maintain backwards compatibility. here are recommendations on how to do that.
+
+### Removing a field
+
+Replace the element in the schema with `null`. The field will no longer be included on anonymization, and ignored on deanonymization. 
+
+### Adding a field
+
+Just append an element to the end of the schema. For backwards compatibility the application consuming the deanonymized JSON object should supply a default if needed. 
+
+### Changing a value's schema
+
+For schema entries with a nested schema or schema reference; either
+
+* Apply a backwards compatible migration to the inner schema
+* Add the field to the schema again, with the new inner schema at the end. Objects may not have duplcate keys, so implementations must overwrite output entries with the last entry found for that name in the schema. The first entry for that name should be removed in the schema used on for anonymization, so that it does not appear twice in the value array.
+
+### Changing a name
+
+Add the new name as a new field. In the schema used for deanonymization, also update the name in-place for the old field.
