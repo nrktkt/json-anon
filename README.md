@@ -84,7 +84,7 @@ The compact format of an object schema is simply the value of its schema field.
 ```
 [
   [1, 5],
-  {},
+  {}, // todo cannonicallize a value for deprecated fields on dehydration?
   9
 ]
 ```
@@ -103,10 +103,7 @@ An array schema indicates that the field is an array and its contents should use
 ```
 {
 "type": "array",
-"schema": {
-  "type": "object",
-  "schema": ["foo", "baz"]
-  }
+"schema": ["foo", "baz"]
 }
 ```
 ##### Hydrated
