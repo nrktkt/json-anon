@@ -45,7 +45,7 @@ A simple schema is effectively a no-op. It indicates that the field should be re
 | ---------- | -------- |
 | `"object"` | array of fields |
 
-The object schema indicates that the field is an object. The schema effectively maps an index to a field name, and optionally provides a schema for the field. This way objects can be converted arrays by removing the field names as well as the other way around.
+The object schema indicates that the field is an object. The schema effectively maps an index to a field name, and optionally provides a schema for the field. This way objects can be converted to arrays by removing the field names as well as the other way around.
 
 #### Field
 
@@ -126,5 +126,34 @@ An array schema indicates that the field is an array and its contents should use
 | `type`     | `schema` |
 | ---------- | -------- |
 | `"reference"` | string |
+
+The reference schema is one that uses an existing external schema. The value of the `schema` field is the name of a schema declared in the root object.
+
+#### Example
+
+##### Schema
+```
+{
+"baz": ["foo"],
+"bar": {
+  "type": "array",
+  "schema": "__$//baz"
+  }
+}
+```
+##### Hydrated
+```
+[
+  {"foo":"bang"}, 
+  {"foo": 5}
+]
+```
+##### Dehydrated
+```
+[
+  ["bang"],
+  [5]
+]
+```
 
 ## Root object
