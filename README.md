@@ -10,7 +10,7 @@
 
 Schemas are simple objects with two fields
 
-```
+```json
 {
 "type":   ...,
 "schema": ...
@@ -68,20 +68,22 @@ The compact format of an object schema is simply the value of its schema field.
 #### Example
 
 ##### Schema
-```
+```json
 {
 "type": "object",
-"schema: [ {"foo": ["bar", "baz]}, null, "bang" ]
+"schema: [ {"foo": ["bar", "baz"]}, null, "bang" ]
 }
 ```
 ##### Hydrated
-`{
+```json
+{
 "foo": { "bar": 1, "baz": 5},
 "bang": 9
-}`
+}
+```
 ##### Dehydrated
 
-```
+```json
 [
   [1, 5],
   {}, // todo cannonicallize a value for deprecated fields on dehydration?
@@ -100,21 +102,21 @@ An array schema indicates that the field is an array and its contents should use
 #### Example
 
 ##### Schema
-```
+```json
 {
 "type": "array",
 "schema": ["foo", "baz"]
 }
 ```
 ##### Hydrated
-```
+```json
 [
   {"foo":"bar"}, 
   {"baz": 5}
 ]
 ```
 ##### Dehydrated
-```
+```json
 [
   ["bar", {}],
   [{}, 5]
@@ -132,7 +134,7 @@ The reference schema is one that uses an existing external schema. The value of 
 #### Example
 
 ##### Schema
-```
+```json
 {
 "baz": ["foo"],
 "bar": {
@@ -142,14 +144,14 @@ The reference schema is one that uses an existing external schema. The value of 
 }
 ```
 ##### Hydrated
-```
+```json
 [
   {"foo":"bang"}, 
   {"foo": 5}
 ]
 ```
 ##### Dehydrated
-```
+```json
 [
   ["bang"],
   [5]
@@ -157,3 +159,24 @@ The reference schema is one that uses an existing external schema. The value of 
 ```
 
 ## Root object
+
+Multiple schema can be defined in an outer "root" object. The field names in this object are the strings used by reference type schemas.  
+For brevity, it may be desirable to write schemas in YAML instead of JSON.
+
+#### Example
+
+```yaml
+person:
+  - first
+  - last
+  - age
+  - address: __$//address
+  - // empty array elements are deprecated/null
+  - kids:
+      type: array
+      schema: __$//person
+address:
+  - street
+  - unit
+  - zip
+```
