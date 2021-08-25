@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+<body style="height: 100vh;">
+    <label for="schema">Schemas:</label><br>
+    <textarea id="schema" name="schema" style="width: 100%; height: 20%;">
+person:
+  - first
+  - last
+  - age
+  - address: __$//address
+  - // empty array elements are deprecated/null
+  - kids:
+      type: array
+      schema: __$//person
+address:
+  - street
+  - unit
+  - zip
+    </textarea><br><br>
+    <label for="schemaName">Schema Name:</label><br>
+    <input id="schemaName" name="schemaName" value="person"><br><br>
+    <label for="hydrated">Hydrated:</label><br>
+    <textarea id="hydrated" name="hydrated" style="width: 100%; height: 20%;">
+{
+  "first": "steve",
+  "last": "doe",
+  "age": 23,
+  "kids": [
+  {
+    "first": "jane",
+    "last": "doe"
+  }
+  ],
+  "address": {
+    "street": "4870 brookburn dr.",
+    "zip": "92130"
+  }
+}
+    </textarea><br><br>
+    <label for="dehydrated">Dehydrated:</label><br>
+    <textarea id="dehydrated" name="dehydrated" style="width: 100%; height: 20%;"></textarea><br><br>
+    Size difference: <span id="diff"></span><br>
+    <button onclick="run()">run</button>
+
+    <script src="index.js"></script>
+    <script src="js-yaml.min.js"></script>
+
+    <script>
+        function run() {
+            let schema = jsyaml.load(document.getElementById("schema").value);
+            let schemaName = document.getElementById("schemaName").value;
+            console.log(schema);
+            console.log(schemaName)
+            let hydrated = document.getElementById("hydrated").value;
+            let dehydrated = document.getElementById("dehydrated").value;
+            var hydratedObj = {}
+            var dehydratedObj = {}
+            console.log(hydrated)
+            console.log(dehydrated)
+            if(hydrated == "") {
+                dehydratedObj = JSON.parse(dehydrated)
+                hydratedObj = hydrate(schema, schema[schemaName], dehydratedObj)
+                document.getElementById("hydrated").value = JSON.stringify(hydratedObj, null, 2);
+            } else {
+                hydratedObj = JSON.parse(hydrated)
+                dehydratedObj = dehydrate(schema, schema[schemaName], hydratedObj)
+                document.getElementById("dehydrated").value = JSON.stringify(dehydratedObj, null, 2);
+            }
+
+            let hydratedSize = JSON.stringify(hydratedObj).length
+            let dehydratedSize = JSON.stringify(dehydratedObj).length
+            console.log(dehydratedSize + "/" + hydratedSize)
+            let diff = (1 - dehydratedSize / hydratedSize) * 100
+            document.getElementById("diff").innerText = diff + "%"
+        }
+
+    </script>
+</body>
+</html>
