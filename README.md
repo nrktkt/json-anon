@@ -1,5 +1,7 @@
 # json-anon
 
+Super shrink your JSON by removing field names.
+
 ## Schemas
 
 ```
